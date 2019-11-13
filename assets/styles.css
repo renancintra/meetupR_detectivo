@@ -1,0 +1,12 @@
+:root {
+    --code-background: transparent;
+    --code-text-color: #FFFFFF;
+
+}
+
+
+.remark-code, .remark-inline-code {
+  font-family: 'Source Code Pro', 'Lucida Console', Monaco, monospace;
+  color: var(--code-text-color);
+  background-color: var(--code-background);
+}

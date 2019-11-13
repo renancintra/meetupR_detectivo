@@ -1,2 +1,4 @@
-# meetupR_detectivo
-apresentação Meet up R useRS
+# detectivo
+Apresentação do detectivo usando LCA e distancia euclidiana
+
+* Meetup R UseRS: 13/11/2019

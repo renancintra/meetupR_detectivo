@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Utilização da Análise de Classes Latentes para estimar similaridades na detecção de propostas fraudulentas</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="   Renan Cintra" />
+    <link href="libs/remark-css/shinobi.css" rel="stylesheet" />
+    <link href="libs/remark-css/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <font size = '15'>Utilização da Análise de Classes Latentes para estimar similaridades na detecção de propostas fraudulentas</font>
+## <i>poLCA</i>
+### <br><br> Renan Cintra
+### <br>13/11/2019
+
+---
+
+
+
+
+class: middle center bg-main1
+
+# **Quem sou eu?**
+
+---
+class: middle, center
+&lt;div align = "center"&gt;
+&lt;img src="images/apresentacao.png" height="100%" width="100%" /&gt;
+&lt;/div&gt;
+
+---
+
+
+class: middle bg-main1 hide-slide-number
+
+.outline[
+## Sumário
+
+* Motivação
+* Análise de Classes Latentes
+* Mas como as classes latentes são estimadas?
+* Por exemplo...
+* Tá, mas...Qual é a ideia?!
+* require(poLCA)
+]
+
+---
+
+class: middle center bg-main1
+
+
+# **&lt;p style = "font-size:85pt"&gt;Motivação&lt;/p&gt;**
+
+
+---
+class:  bg-main5
+## **&lt;p style = "font-size:70pt"&gt;Motivação&lt;/p&gt;**
+
+### 
+&lt;p style = "font-size:20pt"&gt;
+Quando encontramos algum caso inconsistente ou fraudulento: como revisar casos passados para verificar se o caso encontrado é único? 
+&lt;/p&gt;
+
+&lt;center&gt;&lt;p style = "font-size:40pt"&gt;
+Por onde começar a procurar?!
+&lt;/center&gt;
+&lt;/p&gt;
+---
+class: middle, center
+&lt;div align = "center"&gt;
+&lt;img src="images/agulha_palheiro.jpg" height="100%" width="100%" /&gt;
+&lt;/div&gt;
+&lt;!-- fonte da imagem: https://maiscotidiano.blogspot.com/2014/11/homem-tenta-literalmente-procurar-uma-agulha-em-um-palheiro.html último acesso:27/10/2019 --&gt;
+
+
+
+---
+class: split-two white
+
+.column.bg-main1[.content[
+&lt;center&gt;  
+# **Motivação**
+
+  ##&lt;p style="margin-bottom:2cm; margin-top:2cm; font-size:40pt"&gt; Utilizar algum método que consiga encontrar &lt;i&gt;similaridade&lt;/i&gt; entre os diversos casos e, assim, priorizar aqueles que mais se ''pareçam'' com o caso detectado   .&lt;/p&gt;
+
+  
+&lt;/center&gt;
+
+]]
+.column.bg-main2[.content[
+&lt;center&gt;  
+
+&lt;img src="images/agulha_achada.jpg" height="100%" width="100%" /&gt;
+&lt;/div&gt;
+&lt;!-- fonte da imagem: https://blogs.ibahia.com/a/blogs/blogdoinvestidor/2012/04/19/agulha-no-palheiro-19-04-2012/ último acesso: 27/10/2019 --&gt;
+
+&lt;/center&gt;
+]]bsites.
+
+---
+class: middle center bg-main1
+
+# **&lt;p style = "font-size:70pt"&gt;Análise de Classes Latentes&lt;/p&gt;**
+
+
+
+---
+class: split-two white
+
+.column.bg-main1[.content[
+&lt;center&gt;  
+
+
+&lt;img src="images/Lazarsfeld1941_Lge.jpg" height="50%" width="50%" /&gt;
+&lt;/div&gt;
+&lt;!-- fonte da imagem: https://pt.wikipedia.org/wiki/Paul_Lazarsfeld último acesso: 27/10/2019 --&gt;
+
+## &lt;center&gt;&lt;br&gt;Paul Felix Lazarsfeld &lt;/center&gt;&lt;/br&gt;
+&lt;i&gt;The logical and mathematical foundation of latent structure analysis &amp; The interpretation and mathematical foundation
+of latent structure analysis. &lt;/i&gt;
+  
+&lt;/center&gt;
+
+]]
+.column.bg-main2[.content[
+&lt;center&gt;  
+
+&lt;img src="images/goodman_leo192x246.jpg" height="50%" width="50%" /&gt;
+&lt;/div&gt;
+&lt;!-- fonte da imagem: https://galton.uchicago.edu/faculty/emeriti/goodman/index.shtml último acesso: 27/10/2019 --&gt;
+
+##&lt;center&gt;&lt;br&gt; Leo A. Goodman&lt;/center&gt;&lt;/br&gt;
+&lt;i&gt; The analysis of systems of qualitative variables
+when some of the variables are unobservable. Part I: A modified latent
+structure approach&lt;/i&gt;
+
+&lt;/center&gt;
+]]bsites.
+
+---
+class: middle bg-main3
+
+# Análise de Classes Latentes
+
+&lt;!-- 
+Link legal!!
+statisticshowto.datasciencecentral.com/latent-class-analysis-definition/ 
+algoritmo equivalente à definição da média mais próxima com convergência, implementada no K-means,
+essa metrica, de distancia euclidiana funciona bem para variaveis continuas, porem para variaveis categorias??
+problema de trabalhar com missing data
+e falta de criterios estatisticos para definir os grupos.
+A ideia basica eh a de que podemos explicar as associacoes das variaveis observadas num numero menor de grupos 'varivavel multinominal'
+Link muito interesante: https://www.youtube.com/watch?v=Anzoq3VDEB0. útlimo acesso: 03/11/2019 --&gt;
+* **&lt;p style = "font-size:25pt"&gt;&lt;i&gt;Clusterização&lt;/i&gt;&lt;/p&gt;** 
+    &lt;p style = "font-size:15pt"&gt;- formação de grupos a partir de padrões de resposta dos indivíduos; &lt;/p&gt;
+    
+* **&lt;p style = "font-size:25pt"&gt;Análise Fatorial&lt;/p&gt;** 
+    &lt;p style = "font-size:15pt"&gt;- vincula-se à literatura de variáveis latentes (todas as combinações de respostas podem ser resumidas por um número menor de grupos);&lt;/p&gt;
+    
+* **&lt;p style = "font-size:25pt"&gt;Método propício para variáveis categóricas&lt;/p&gt;**
+    &lt;p style = "font-size:15pt"&gt;- utilização de probabilidades na definição de grupos;&lt;/p&gt;
+    
+* **&lt;p style = "font-size:25pt"&gt;Estatísticas de Ajuste&lt;/p&gt;** 
+    &lt;p style = "font-size:15pt"&gt;- Entropia, AIC, BIC...; &lt;/p&gt;
+    um BAITA resumo da utilização dessas estatísticas para o LCA está na página 14 e adiante deste  [trabalho](https://lume.ufrgs.br/bitstream/handle/10183/133682/000986100.pdf?sequence=1&amp;isAllowed=y) 
+    
+
+---
+
+class: middle center bg-main1
+
+# **Mas como as classes latentes são estimadas?**
+
+---
+class: middle center bg-main1
+&lt;!-- link utilizado: https://pdfs.semanticscholar.org/8149/dc67491a4fc68a2cb4281d26fc42033ced0f.pdf 
+Assumindo que, dentro de cada classe latente, as variaveis sao independentes. Porque queremos que as CLASSES
+capturem a relação entre as variaveis na população. 
+Essa probabilidade condicional permite o calculo de uma probabilidade a posteriori
+
+Verossimilhança Condicional --&gt;
+
+# Estimando Probabilidade de pertencimento a uma classe, dado um padrão de respostas
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+$$ P(X= x \mid \mathbf{Y = y}) = \frac{P( X = x) P(\mathbf{Y = y} \mid X = x)}{P(\mathbf{Y = y})}, $$
+onde `\(P(X=x)\)` é a probabilidade de pertencimento à classe `\(x\)` e `\(\mathbf{y}\)` representa o padrão das respostas categóricas.
+---
+
+class: middle center bg-main1
+
+# **Por exemplo...**
+
+---
+class: middle left bg-main7
+
+
+$$P_{Fulano, CL1}  = \frac{P(X=1) \times P( Y1, Y2, Y3 \mid Y1_1, Y2_1, Y3_1)}{P(X=1) \times P(Y1, Y2, Y3 \mid Y1_1, Y2_1, Y3_1) + P(X=2) \times P(Y1, Y2, Y3 \mid Y1_2, Y2_2, Y3_2)} $$
+
+
+* Para tanto, 
+1. Definir um `\(P(X=1)\)` e `\(P(x=2)\)` aleatórios
+2. Calcular um `\(P( Y1, Y2, Y3 \mid Y1_1, Y2_1, Y3_1)\)` e `\(P( Y1, Y2, Y3 \mid Y1_2, Y2_2, Y3_2)\)`, ponderados por `\(P(X=1)\)` e `\(P(X=2)\)`
+3. Atualizar `\(P(X=1)\)` e `\(P(X=2)\)`
+4. Calcular novas probabilidades de pertencimento
+5. Repetir passos 2 a 4 até não se alterarem significativamente mais.
+
+Para uma visão bem melhor explicada que a minha, olhar [esse link](https://www.youtube.com/watch?v=Anzoq3VDEB0) e [esse outro aqui](https://pdfs.semanticscholar.org/8149/dc67491a4fc68a2cb4281d26fc42033ced0f.pdf).
+
+---
+
+class: middle center bg-main1
+
+# **&lt;p style = "font-size:70pt"&gt;Tá, mas...Qual é a ideia?!&lt;/p&gt;**
+
+---
+class: middle, center
+&lt;div align = "center"&gt;
+&lt;img src="images/Fluxograma.png" height="100%" width="100%" /&gt;
+&lt;/div&gt;
+
+
+
+---
+
+class: middle center bg-main1
+
+# **require(poLCA)**
+
+
+---
+
+
+class: middle center bg-main1
+
+
+## [E-mail](mailto:faraon.renan@gmail.com): faraon.renan@gmail.com
+## [github](https://github.com/renancintra): https://github.com/renancintra
+## [Linkedin](https://www.linkedin.com/in/renan-cintra-2b830011a/):  https://www.linkedin.com/in/renan-cintra-2b830011a/
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"seal": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
