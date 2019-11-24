@@ -93,7 +93,7 @@ row.names(probs) <- db_cla_model_outros$NU_INSCRICAO
 rank_deteccao <-function(fraude_enc  = fraude_enc, 
                          db_polca    = db_polca){
   
-  
+  set.seed(1311) #semente com o dia do meetup
   eucl_dist <-
     probs %>% 
     dist(. ,method = 'euclidean') %>% 
